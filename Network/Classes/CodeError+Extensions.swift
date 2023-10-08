@@ -23,10 +23,10 @@
 
 import RapidFoundation
 
-extension CodeError.Code {
-    public static let noNetworkConnection = Self(10200)
+extension CodeError {
+    public static let noNetworkConnection = Self(10200, description: "No network connection")
     
-    public static let cantCreateNetworkRequest = Self(10201)
+    public static let cantCreateNetworkRequest = Self(10201, description: "Can't create network request")
     
-    public static let cantParseNetworkResponse = Self(10202)
+    public static let cantParseNetworkResponse = Self(10202, description: "Can't parse network response")
 }

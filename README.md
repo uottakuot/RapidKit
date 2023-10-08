@@ -78,13 +78,11 @@ RapidKit is designed to make iOS app development and support faster and  easier.
 - Error type with multiple error codes
 
     ```swift
-    extension CodeError.Code {
-        static let myError1 = Self(1001)
-        
-        static let myError2 = Self(1002)
+    extension CodeError {
+        static let myError = Self([1001, 1002], description: "Optional description")
     }
     
-    let error = CodeError(codes: [.myError1, .myError2])
+    throw CodeError.myError
     ```
 
 - Useful methods for arrays and JSON dictionaries

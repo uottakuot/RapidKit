@@ -159,7 +159,7 @@ public class Network {
         
         guard Self.reachabilityStatus != .none else {
             DispatchQueue.main.async {
-                fail(CodeError(code: .noNetworkConnection))
+                fail(CodeError.noNetworkConnection)
             }
             
             return nil
@@ -167,7 +167,7 @@ public class Network {
         
         guard let urlRequest = urlRequestFromRequest(request) else {
             DispatchQueue.main.async {
-                fail(CodeError(code: .cantCreateNetworkRequest))
+                fail(CodeError.cantCreateNetworkRequest)
             }
             
             return nil
@@ -202,7 +202,7 @@ public class Network {
                     print("Error: \(error.localizedDescription)")
                     
                     if let codeError = error as? CodeError {
-                        print("Error codes: \(codeError.codes.map { $0.rawValue })")
+                        print("Error codes: \(codeError.codes)")
                     }
                 }
                 
@@ -367,11 +367,11 @@ public class Network {
     
     private func error(from response: URLResponse?, data: Data?, error: Error?) -> Error? {
         var errorMessage: String?
-        var errorCodes: [CodeError.Code] = []
+        var errorCodes: [Int] = []
         
         if let response = response as? HTTPURLResponse {
             if response.statusCode >= 400 {
-                errorCodes.append(CodeError.Code(response.statusCode))
+                errorCodes.append(response.statusCode)
             }
         }
         
@@ -380,7 +380,7 @@ public class Network {
                 errorCodes.append(contentsOf: codeError.codes)
                 errorMessage = codeError.localizedDescription
             } else {
-                let code = CodeError.Code((errorFromResponse as NSError).code)
+                let code = (errorFromResponse as NSError).code
                 errorCodes.append(code)
                 errorMessage = (errorFromResponse as NSError).localizedDescription
             }
@@ -392,12 +392,12 @@ public class Network {
             }
             
             if errorCodes.isEmpty {
-                errorCodes.append(CodeError.Code((error as NSError).code))
+                errorCodes.append((error as NSError).code)
             }
         }
         
         if !errorCodes.isEmpty {
-            return CodeError(codes: errorCodes, description: errorMessage)
+            return CodeError(errorCodes, description: errorMessage)
         }
         
         return nil

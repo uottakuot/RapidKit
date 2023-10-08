@@ -55,7 +55,7 @@ extension Network {
         
         open override func parse(_ data: Data) throws {
             guard let string = String(data: data, encoding: .utf8) else {
-                throw CodeError(code: .cantParseNetworkResponse)
+                throw CodeError.cantParseNetworkResponse
             }
             
             self.string = string
@@ -77,7 +77,7 @@ extension Network {
         
         open override func parse(_ data: Data) throws {
             guard let json = try? JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed) else {
-                throw CodeError(code: .cantParseNetworkResponse)
+                throw CodeError.cantParseNetworkResponse
             }
             
             self.json = json
@@ -99,7 +99,7 @@ extension Network {
         
         open override func parse(_ data: Any) throws {
             guard let dictionary = data as? JSONDictionary else {
-                throw CodeError(code: .cantParseNetworkResponse)
+                throw CodeError.cantParseNetworkResponse
             }
             
             self.dictionary = dictionary
@@ -121,7 +121,7 @@ extension Network {
         
         open override func parse(_ data: Any) throws {
             guard let array = data as? JSONArray else {
-                throw CodeError(code: .cantParseNetworkResponse)
+                throw CodeError.cantParseNetworkResponse
             }
             
             self.array = array

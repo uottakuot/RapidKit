@@ -25,62 +25,41 @@ import Foundation
 
 /// Error with several error codes.
 ///
-/// # Example #:
-/// ```
-/// extension CodeError.Code {
-///     static let myError1 = Self(1001)
-///     static let myError2 = Self(1002)
-/// }
-///
-/// let error = CodeError(codes: [.myError1, .myError2])
-/// ```
-public struct CodeError: Error {
-    public struct Code: Equatable {
-        public static let none = Self(0)
-        
-        public static func ==(lhs: Code, rhs: Code) -> Bool {
-            return lhs.rawValue == rhs.rawValue
-        }
-        
-        public let rawValue: Int
-        
-        public init(_ rawValue: Int) {
-            self.rawValue = rawValue
-        }
+/// Every code can have an associated description in localization strings with "Error [code]" key
+/// which results in the final error description.
+public struct CodeError: Error, Equatable {
+    public static func ==(lhs: CodeError, rhs: CodeError) -> Bool {
+        return lhs.codes == rhs.codes
     }
     
-    public let codes: [Code]
+    public let codes: [Int]
     
     public let description: String
     
-    public init(codes: [Code], description: String? = nil) {
+    public init(_ codes: [Int], description: String? = nil) {
         self.codes = codes
         
-        self.description = description ?? {
-            for code in codes {
-                let descriptionKey = "Error_\(code.rawValue)"
+        self.description = (description.isEmptyOrNil ? localizedString("Error") : description!) + ": " + {
+            let descriptions = codes.map { code -> String in
+                let descriptionKey = "Error \(code)"
                 let description = localizedString(descriptionKey)
-                
                 if description != descriptionKey {
-                    return "[\(code.rawValue)] \(description)"
+                    return "[\(code)] \(description)"
                 }
+                
+                return String(code)
             }
             
-            let numbers = codes.map { String($0.rawValue) }
-            return "Error \(numbers.joined(separator: ", "))"
+            return descriptions.joined(separator: ", ")
         }()
     }
     
-    public init(code: Code, description: String? = nil) {
-        self.init(codes: [code], description: description)
-    }
-    
-    public func containsCode(_ code: Code) -> Bool {
-        return self.codes.contains(code)
+    public init(_ code: Int, description: String? = nil) {
+        self.init([code], description: description)
     }
     
     public func containsCode(_ code: Int) -> Bool {
-        return self.codes.contains { $0.rawValue == code }
+        return self.codes.contains(code)
     }
 }
 
@@ -88,4 +67,10 @@ extension CodeError: LocalizedError {
     public var errorDescription: String? {
         return description
     }
+}
+
+extension CodeError {
+    public static let unknown = Self(0, description: "Unknown error")
+    
+    public static let notImplemented = Self(-1, description: "Not implemented")
 }

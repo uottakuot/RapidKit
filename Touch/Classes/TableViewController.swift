@@ -41,6 +41,10 @@ open class TableViewController: BaseViewController {
         return allCellSources.count > 0
     }
     
+    open override var noDataContainer: UIView {
+        return tableView
+    }
+    
     public var activeIndexPath: IndexPath? {
         guard let firstResponder = tableView.firstResponder else {
             return nil
